@@ -1,0 +1,1179 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuestionario de Física y Ciencias de la Tierra</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']],
+          processEscapes: true
+        },
+        svg: {
+          fontCache: 'global'
+        },
+        chtml: {
+          displayAlign: 'left'
+        }
+      };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #4f46e5; --primary-dark: #4338ca; --primary-light: #eef2ff;
+            --secondary-color: #64748b; --success-color: #10b981; --success-light: #ecfdf5;
+            --danger-color: #ef4444; --danger-light: #fef2f2; --warning-color: #f59e0b;
+            --light-bg: #f1f5f9; --border-color: #cbd5e1; --text-color: #1e293b;
+            --white: #ffffff; --progress-color-start: #4f46e5; --progress-color-end: #10b981;
+        }
+        @keyframes moveGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        body {
+            font-family: 'Inter', sans-serif; display: flex; justify-content: center;
+            align-items: flex-start; min-height: 100vh;
+            background: linear-gradient(-45deg, #6d28d9, #4f46e5, #d946ef, #10b981);
+            background-size: 400% 400%; animation: moveGradient 20s ease infinite;
+            margin: 0; padding: 2em 1em;
+        }
+        .main-wrapper { width: 100%; max-width: 900px; position: relative; }
+        .card { background: var(--white); padding: 2.5em; border-radius: 16px; box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15); animation: fadeIn 0.5s ease-out; }
+        .hidden { display: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDownFade { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        #category-selection-screen h2 { font-size: 2em; color: var(--primary-color); text-align: center; margin-top: 0; margin-bottom: 0.5em; }
+        #category-selection-screen .subtitle { text-align: center; color: var(--secondary-color); margin-bottom: 2em; font-size: 1.1em; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+        #category-list { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5em; margin-bottom: 2.5em; }
+        .category-item { background-color: var(--white); border: 2px solid var(--border-color); border-radius: 12px; padding: 1.5em; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .category-item:hover:not(.completed) { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(79,70,229,0.1); border-color: var(--primary-color); }
+        .category-item h3 { margin: 0 0 0.5em 0; color: var(--primary-dark); font-size: 1.25em; }
+        .category-item p { margin: 0; color: var(--secondary-color); font-size: 0.95em; line-height: 1.5; }
+        .category-item.completed { border-color: var(--success-color); background-color: var(--success-light); cursor: default; }
+        .category-item.completed:hover { transform: none; box-shadow: none; }
+        .category-item.completed::before { content: '✔'; font-weight: bold; position: absolute; top: 1em; right: 1.2em; color: var(--success-color); font-size: 1.5em; }
+        .category-item .progress-info { margin-top: 1em; font-weight: bold; color: var(--success-color); }
+        #overall-progress-container { margin-top: 2em; text-align: center; border-top: 1px solid var(--border-color); padding-top: 2em;}
+        #overall-progress-container h3 { margin: 0 0 0.5em 0; color: var(--text-color); }
+        #overall-score { font-size: 1.2em; color: var(--secondary-color); }
+        #show-final-results-btn { padding: 12px 30px; font-size: 1em; font-weight: bold; color: var(--white); background-color: var(--success-color); border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s; margin-top: 1em; }
+        #show-final-results-btn:hover { background-color: #059669; }
+
+        /* --- New Summary Card Styles --- */
+        #summary-container h2 { font-size: 1.8em; margin-top: 0; margin-bottom: 0.2em; color: var(--primary-color); }
+        #summary-container .subtitle { color: var(--secondary-color); margin-top: 0; margin-bottom: 2em; }
+        .summary-section { margin-bottom: 2.5em; }
+        .summary-section h3 { font-size: 1.2em; font-weight: 700; color: var(--text-color); margin-bottom: 1em; padding-bottom: 0.5em; border-bottom: 2px solid var(--primary-light); display: flex; align-items: center; gap: 0.75em; }
+        .summary-key-concepts { line-height: 1.7; color: #374151; }
+        .summary-key-concepts p, .summary-key-concepts ul, .summary-key-concepts ol { margin-bottom: 1em; }
+        .summary-key-concepts ul, .summary-key-concepts ol { padding-left: 20px; }
+        .summary-key-concepts strong { color: var(--primary-dark); }
+        .summary-key-concepts mjx-container[display="true"] { background-color: rgba(79, 70, 229, 0.05); padding: 1em; border-radius: 8px; margin: 1em 0; }
+        .summary-tips-list { list-style: none; padding: 0; }
+        .summary-tips-list li { display: flex; align-items: flex-start; gap: 1em; margin-bottom: 1em; background-color: var(--primary-light); padding: 1em; border-radius: 8px; }
+        .summary-tips-list li::before { content: '💡'; font-size: 1.2em; line-height: 1.5; }
+        #summary-continue-btn { padding: 12px 30px; font-size: 1em; font-weight: bold; color: var(--white); background-color: var(--primary-color); border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; display: block; width: 100%; }
+        #summary-continue-btn:hover { background-color: var(--primary-dark); transform: scale(1.02); }
+
+        /* --- Main Quiz & Final Screen Styles --- */
+        #quiz-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5em; }
+        #problem-header { color: var(--text-color); font-weight: 600; font-size: 1.1em; }
+        #score-counter { color: var(--success-color); font-weight: 600; font-size: 1em; background-color: var(--success-light); padding: 5px 10px; border-radius: 8px; }
+        #progress-container { width: 100%; background-color: #e2e8f0; border-radius: 10px; margin-bottom: 1.5em; height: 12px; overflow: hidden; }
+        #progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--progress-color-start), var(--progress-color-end)); border-radius: 10px; transition: width 0.6s cubic-bezier(0.4, 0.0, 0.2, 1); }
+        #question-container { font-size: 1.15em; line-height: 1.7; margin: 1em 0; color: var(--text-color); text-align: justify; }
+        #question-container table { width: 100%; border-collapse: collapse; margin: 1em 0; }
+        #question-container th, #question-container td { border: 1px solid var(--border-color); padding: 12px; text-align: center; }
+        #question-container th { background-color: var(--light-bg); font-weight: 600; }
+        #graph-container, .option-graph-canvas-container { width: 100%; max-width: 450px; margin: 1.5em auto; border-radius: 8px; overflow: hidden; }
+        #graph-container svg, #graph-container img, .option-graph-canvas-container svg, .option-graph-canvas-container img {max-width: 100%; height: auto; display: block; margin: 0 auto; background: white; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);}
+        #options-container { margin-top: 1.5em; display: flex; flex-direction: column; gap: 0.75em; }
+        .option-button { display: flex; align-items: center; gap: 1em; width: 100%; padding: 14px 18px; font-size: 1.05em; text-align: left; background-color: var(--white); border: 2px solid var(--border-color); border-radius: 12px; cursor: pointer; transition: all 0.2s ease-in-out; }
+        .option-button:hover:not(.disabled) { border-color: var(--primary-color); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .option-button .label { font-weight: bold; color: var(--primary-color); }
+        .option-button .value { flex-grow: 1; }
+        .option-button.correct { border-color: var(--success-color); background-color: var(--success-light); }
+        .option-button.correct .label { color: var(--success-color); }
+        .option-button.incorrect { border-color: var(--danger-color); background-color: var(--danger-light); }
+        .option-button.incorrect .label { color: var(--danger-color); }
+        .option-button.disabled { cursor: not-allowed; }
+        .options-grid-with-graphs { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; }
+        .option-block-graph { padding: 1em; border: 2px solid var(--border-color); border-radius: 12px; cursor: pointer; transition: all 0.2s ease-in-out; background-color: var(--white); }
+        .option-block-graph:hover:not(.disabled) { border-color: var(--primary-color); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .option-block-graph.correct { border-color: var(--success-color)!important; background-color: var(--success-light); }
+        .option-block-graph.incorrect { border-color: var(--danger-color)!important; background-color: var(--danger-light); }
+        .option-block-graph .label { font-size: 1.2em; font-weight: bold; margin-bottom: 0.5em; color: var(--primary-color); }
+        
+        #hints-container { margin-top: 1.5em; border-top: 1px dashed var(--border-color); padding-top: 1.5em; display: flex; flex-direction: column; gap: 0.5em; }
+        .hint-button { width: 100%; padding: 10px; background-color: var(--primary-light); border: 1px solid var(--primary-color); color: var(--primary-dark); border-radius: 8px; cursor: pointer; transition: background-color 0.2s; font-weight: 500; }
+        .hint-button:hover { background-color: #dbeafe; }
+        .hint-button:disabled { background-color: #e5e7eb; border-color: var(--border-color); color: var(--secondary-color); cursor: not-allowed; }
+        .hint-content { padding: 12px; background-color: #f3f4f6; border-radius: 8px; font-size: 0.95em; color: var(--text-color); animation: fadeIn 0.3s; }
+
+        #feedback-container { margin-top: 1.5em; padding: 1.2em; border-radius: 12px; display: none; animation: slideDownFade 0.4s ease-out; line-height: 1.7; text-align: justify; }
+        #feedback-container.correct { background-color: var(--success-light); border-left: 5px solid var(--success-color); }
+        #feedback-container.incorrect { background-color: var(--danger-light); border-left: 5px solid var(--danger-color); }
+        #feedback-title { display: flex; align-items: center; font-size: 1.2em; font-weight: 700; margin-bottom: 0.5em; }
+        #feedback-title svg { width: 24px; height: 24px; margin-right: 8px; }
+        #feedback-container.correct #feedback-title { color: var(--success-color); }
+        #feedback-container.incorrect #feedback-title { color: var(--danger-color); }
+        #navigation-container { display: flex; justify-content: flex-end; margin-top: 2em; }
+        #next-button, .nav-btn { padding: 12px 30px; font-size: 1em; font-weight: bold; color: var(--white); background-color: var(--primary-color); border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s; }
+        #next-button { visibility: hidden; opacity: 0; }
+        #next-button.visible { visibility: visible; opacity: 1; }
+        #next-button:hover, .nav-btn:hover { background-color: var(--primary-dark); }
+        #final-screen { text-align: center; animation: fadeIn 0.5s ease-out; }
+        #final-screen h2 { font-size: 2.2em; color: var(--primary-color); font-weight: 700; }
+        #final-screen p { font-size: 1.2em; }
+        .highlight { color: var(--primary-color); font-weight: 700; }
+        @media (max-width: 680px) { .options-grid-with-graphs { grid-template-columns: 1fr; } #category-list { grid-template-columns: 1fr; }}
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <div id="category-selection-screen" class="card">
+            <h2>Cuestionario de Física y Ciencias de la Tierra</h2>
+            <p class="subtitle">Selecciona un tema para comenzar. Cada sección se enfoca en una habilidad clave. ¡Completa todas las secciones para demostrar tu maestría!</p>
+            <ul id="category-list"></ul>
+            <div id="overall-progress-container" class="hidden">
+                <h3>Progreso General</h3>
+                <p id="overall-score"></p>
+                <button id="show-final-results-btn" class="nav-btn hidden">Ver Resumen Final</button>
+            </div>
+        </div>
+
+        <div id="quiz-wrapper" class="hidden">
+            <div id="summary-container" class="card hidden">
+                <h2 id="summary-title"></h2>
+                <p class="subtitle">Prepárate para la siguiente sección.</p>
+
+                <div class="summary-section">
+                    <h3>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-book-open" style="color: var(--primary-dark);"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                      Conceptos Clave y Fórmulas
+                    </h3>
+                    <div id="summary-key-concepts" class="summary-key-concepts"></div>
+                </div>
+                
+                <div class="summary-section">
+                    <h3>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-zap" style="color: var(--warning-color);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                      Consejos para esta Sección
+                    </h3>
+                    <ul id="summary-tips-list" class="summary-tips-list"></ul>
+                </div>
+                
+                <button id="summary-continue-btn">Comenzar Problemas</button>
+            </div>
+
+            <div id="quiz-container" class="hidden card">
+                <div id="progress-container"><div id="progress-bar"></div></div>
+                <div id="quiz-header-bar">
+                    <div id="problem-header"></div>
+                    <div id="score-counter"></div>
+                </div>
+                <div id="question-container"></div>
+                <div id="graph-container"></div>
+                <div id="options-container"></div>
+                <div id="hints-container"></div>
+                <div id="feedback-container"></div>
+                <div id="navigation-container"><button id="next-button">Siguiente →</button></div>
+            </div>
+
+            <div id="final-screen" class="hidden card">
+                <h2 id="final-title"></h2>
+                <p id="final-message"></p>
+                <p id="final-score" style="font-size: 2.5em; font-weight: bold; margin: 0.5em 0;"></p>
+                <p id="final-percentage" style="font-size: 1.5em;"></p>
+                <button id="back-to-menu-btn" class="nav-btn">Volver al Menú</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function renderMath() {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        setTimeout(() => window.MathJax.typesetPromise(), 0);
+      }
+    }
+
+    function renderDiagram(diagram) {
+        if (!diagram) return '';
+        if (diagram.type === 'raster') {
+            return `<img src="${diagram.src}" alt="Diagrama" style="max-width: 100%; height: auto; display: block; margin: 0 auto; background: white; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;" />`;
+        }
+        return '';
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const icons = {
+            check: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>`,
+            x: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`
+        };
+        const summaries = {
+  "ai-cat-1759082921464-0": {
+    "title": "Ondas (Óptica Geométrica)",
+    "key_concepts_html": "<p>Esta sección se enfoca en la <strong>Óptica Geométrica</strong>, explorando cómo la luz interactúa con espejos y lentes, y los fenómenos de refracción. Los conceptos clave incluyen:</p><ul><li><strong>Espejos Planos:</strong> Siempre forman imágenes <strong>virtuales, derechas y del mismo tamaño</strong> que el objeto. La imagen se percibe detrás del espejo.</li><li><strong>Espejos Cóncavos:</strong> La naturaleza de la imagen (real o virtual, derecha o invertida, aumentada o disminuida) depende de la posición del objeto respecto al foco (\\(F\\)) y el centro de curvatura (\\(C\\)). Una imagen <strong>virtual, derecha y magnificada</strong> se forma cuando el objeto está entre el foco y el vértice.</li><li><strong>Lentes Divergentes:</strong> Siempre producen imágenes <strong>virtuales, derechas y de menor tamaño</strong>, independientemente de la posición del objeto.</li><li><strong>Refracción:</strong> Es el cambio de dirección que experimenta una onda al pasar de un medio a otro. La <strong>Ley de Snell</strong> (\\(n_1 \t\\text{sen}\t\\theta_1 = n_2 \t\\text{sen}\t\\theta_2\\)) rige este fenómeno.</li><li><strong>Ángulo Crítico:</strong> Es el ángulo de incidencia en el cual el ángulo de refracción es de \\(90^\t\\text{o}\\), ocurriendo cuando la luz pasa de un medio más denso a uno menos denso. Más allá de este ángulo, se produce la <strong>reflexión interna total</strong>.</li><li><strong>Índice de Refracción (\\(n\\)):</strong> Se define como la relación entre la rapidez de la luz en el vacío (\\(c\\)) y la rapidez de la luz en un medio (\\(v\\)), es decir, \\(n = c/v\\). Un mayor índice de refracción implica una menor rapidez de la luz en ese medio. La <strong>frecuencia</strong> de la luz no cambia al pasar de un medio a otro.</li></ul>",
+    "tips": [
+      "Presta atención a los detalles en los enunciados y diagramas.",
+      "Recuerda revisar las fórmulas y conceptos clave relacionados antes de empezar.",
+      "Usa la explicación para entender tus errores y reforzar tu aprendizaje.",
+      "¡Mucha suerte en esta sección!"
+    ]
+  },
+  "ai-cat-1759082921464-1": {
+    "title": "Mecánica",
+    "key_concepts_html": "<p>Esta sección aborda conceptos fundamentales de la <strong>Dinámica</strong>, centrándose en las interacciones de fuerzas, el movimiento y el equilibrio de los objetos. Los principios clave a considerar son:</p><ul><li><strong>Fricción Estática y Cinética:</strong> La fuerza de roce estático (\\(f_{s}\\)) se opone al inicio del movimiento y su valor máximo es \\(f_{s,max} = \\mu_s N\\), donde \\(\\mu_s\\) es el coeficiente de roce estático y \\(N\\) es la fuerza normal. La fuerza de roce cinético (\\(f_k\\)) actúa sobre objetos en movimiento y es \\(f_k = \\mu_k N\\).</li><li><strong>Leyes de Newton:</strong><ul><li><strong>Primera Ley (Inercia):</strong> Un objeto en reposo permanece en reposo, y un objeto en movimiento continúa en movimiento con velocidad constante, a menos que una fuerza neta actúe sobre él. Esto implica que si \\(v = \\text{constante}\\), la fuerza neta es cero (\\(\\sum \\vec{F} = 0\\)).</li><li><strong>Segunda Ley (Fuerza y Aceleración):</strong> La fuerza neta que actúa sobre un objeto es igual al producto de su masa por su aceleración (\\(\\sum \\vec{F} = m\\vec{a}\\)).</li><li><strong>Tercera Ley (Acción y Reacción):</strong> Para cada acción, hay una reacción igual y opuesta.</li></ul></li><li><strong>Descomposición de Fuerzas:</strong> Cuando las fuerzas actúan en un ángulo, es esencial descomponerlas en componentes horizontal y vertical para aplicar las leyes de Newton en cada dirección de forma independiente.</li><li><strong>Sistemas de Masas y Poleas Ideales:</strong> En estos sistemas, las poleas y cuerdas se consideran sin masa ni fricción, y la tensión es uniforme a lo largo de la cuerda. La aceleración del sistema se calcula considerando la fuerza neta que mueve la masa total.</li><li><strong>Roce con el Aire (Fuerza de Arrastre):</strong> Esta fuerza depende de la velocidad del objeto, el área de la sección transversal, la densidad del aire y un coeficiente de arrastre. A medida que la velocidad de un objeto que cae aumenta, la fuerza de roce con el aire también aumenta, hasta que puede alcanzar una <strong>velocidad terminal</strong> cuando la fuerza de arrastre se iguala al peso del objeto.</li></ul>",
+    "tips": [
+      "Presta atención a los detalles en los enunciados y diagramas.",
+      "Recuerda revisar las fórmulas y conceptos clave relacionados antes de empezar.",
+      "Usa la explicación para entender tus errores y reforzar tu aprendizaje.",
+      "¡Mucha suerte en esta sección!"
+    ]
+  },
+  "ai-cat-1759082921464-2": {
+    "title": "Ciencias de la Tierra",
+    "key_concepts_html": "<p>Esta sección se centra en conceptos fundamentales de las <strong>Ciencias de la Tierra</strong>, específicamente en las características de la hidrosfera y la dinámica de la tectónica de placas. Los puntos clave incluyen:</p><ul><li><strong>Hidrosfera:</strong> Comprende toda el agua del planeta en sus diferentes estados (líquido, sólido, gaseoso). Su interacción con la <strong>atmósfera</strong> es crucial para la determinación del clima global y los patrones meteorológicos, a través de fenómenos como el ciclo del agua y las corrientes oceánicas que redistribuyen el calor.</li><li><strong>Tectónica de Placas (Límites Divergentes):</strong> Son zonas donde las placas tectónicas se separan una de otra. Las características asociadas a estos límites oceánicos son:<ul><li><strong>Cordones montañosos submarinos o dorsales oceánicas:</strong> Son cadenas montañosas que se forman por el ascenso de magma y la creación de nueva corteza oceánica.</li><li><strong>Zona de separación:</strong> Se genera un \"rift\" o valle central por donde el magma emerge.</li><li><strong>Actividad sísmica:</strong> Aunque generalmente de baja magnitud, la separación de placas genera sismos.</li></ul></li><li><strong>Fosas Oceánicas:</strong> A diferencia de los límites divergentes, las fosas oceánicas son depresiones profundas en el le fondo oceánico que se forman en los <strong>límites convergentes</strong>, donde una placa oceánica se subduce (se hunde) debajo de otra placa (oceánica o continental).</li></ul>",
+    "tips": [
+      "Presta atención a los detalles en los enunciados y diagramas.",
+      "Recuerda revisar las fórmulas y conceptos clave relacionados antes de empezar.",
+      "Usa la explicación para entender tus errores y reforzar tu aprendizaje.",
+      "¡Mucha suerte en esta sección!"
+    ]
+  },
+  "ai-cat-1759082921464-3": {
+    "title": "Circuitos Eléctricos",
+    "key_concepts_html": "<p>Esta sección se dedica a los principios básicos de los <strong>Circuitos Eléctricos</strong>, cubriendo la Ley de Ohm, las leyes de Kirchhoff y las características de las conexiones en serie y paralelo, que son fundamentales para entender cómo funciona la electricidad en aplicaciones prácticas como las instalaciones domiciliarias. Los conceptos clave son:</p><ul><li><strong>Ley de Ohm:</strong> Relaciona el voltaje (\\(V\\)), la corriente (\\(i\\)) y la resistencia (\\(R\\)) en un circuito. Se expresa como \\(V = iR\\).</li><li><strong>Ley de Voltajes de Kirchhoff (LVK):</strong> Establece que la suma algebraica de las diferencias de potencial (voltajes) alrededor de cualquier lazo cerrado en un circuito es igual a cero. Para un circuito en serie con una fuente, \\(V_{\\text{fuente}} = V_1 + V_2 + \\dots + V_n\\).</li><li><strong>Circuitos en Serie:</strong><ul><li>La corriente es la misma a través de cada componente.</li><li>El voltaje total se divide entre los componentes.</li><li>La resistencia equivalente es la suma de las resistencias individuales: \\(R_{\\text{eq}} = R_1 + R_2 + \\dots + R_n\\).</li></ul></li><li><strong>Circuitos en Paralelo:</strong><ul><li>El voltaje es el mismo a través de cada rama del circuito (cada componente recibe el voltaje de la fuente).</li><li>La corriente total se divide entre las ramas.</li><li>La inversa de la resistencia equivalente es la suma de las inversas de las resistencias individuales: \\(\\frac{1}{R_{\\text{eq}}} = \\frac{1}{R_1} + \\frac{1}{R_2} + \\dots + \\frac{1}{R_n}\\). Esto implica que al añadir más resistencias en paralelo, la resistencia total equivalente del circuito <strong>disminuye</strong>. Las instalaciones domiciliarias utilizan conexiones en paralelo.</li></ul></li></ul>",
+    "tips": [
+      "Presta atención a los detalles en los enunciados y diagramas.",
+      "Recuerda revisar las fórmulas y conceptos clave relacionados antes de empezar.",
+      "Usa la explicación para entender tus errores y reforzar tu aprendizaje.",
+      "¡Mucha suerte en esta sección!"
+    ]
+  }
+};
+        const allProblemsData = [
+  {
+    "text": "Al ubicar un objeto frente a un espejo plano es de esperar que su imagen sea:",
+    "options": [
+      {
+        "text": "Virtual, derecha y de mayor tamaño que el objeto."
+      },
+      {
+        "text": "Virtual, invertida y del mismo tamaño del objeto."
+      },
+      {
+        "text": "Real, derecha y del mismo tamaño que el objeto."
+      },
+      {
+        "text": "Virtual, derecha y del mismo tamaño del objeto."
+      },
+      {
+        "text": "Real, invertida y del mismo tamaño del objeto."
+      }
+    ],
+    "correct": 3,
+    "explanation": "Los espejos planos, como los que usamos a diario, forman imágenes con un conjunto de propiedades consistentes y predecibles. La imagen siempre se percibe detrás del espejo (virtual), mantiene la misma orientación vertical que el objeto (derecha) y tiene exactamente las mismas dimensiones (mismo tamaño).",
+    "hints": [
+      "Piensa en tu reflejo en un espejo de baño. La imagen que ves, ¿parece estar detrás del espejo o puedes proyectarla en una pantalla frente a él? Esto define si es virtual o real.",
+      "¿Tu imagen en el espejo está de cabeza o en la misma orientación vertical que tú? Esto define si es derecha o invertida. (No confundir con la inversión lateral izquierda-derecha).",
+      "¿Te ves más grande, más pequeño o del mismo tamaño en el reflejo? Esto define el tamaño relativo."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "1",
+    "internalId": "q-1759082921464-0.5371089340927133",
+    "id": "q-ai-cat-1759082921464-0-0"
+  },
+  {
+    "text": "En la figura se muestra la imagen de un objeto ubicado delante de un espejo cóncavo. ¿Dónde se debe haber ubicado el objeto?",
+    "options": [
+      {
+        "text": "Entre el centro y el infinito."
+      },
+      {
+        "text": "Entre el foco y el centro."
+      },
+      {
+        "text": "En el centro."
+      },
+      {
+        "text": "En el foco."
+      },
+      {
+        "text": "Entre el foco y el vértice."
+      }
+    ],
+    "correct": 4,
+    "explanation": "La imagen mostrada es derecha y de mayor tamaño. En un espejo cóncavo, este conjunto específico de características (derecha, virtual y magnificada) solo se produce cuando el objeto se sitúa en una única región: entre el punto focal (\\(F\\)) y el vértice del espejo. Esta es la configuración utilizada en los espejos de aumento.",
+    "hints": [
+      "Analiza las características de la imagen dada: es derecha y más grande que el objeto (implícito en el diagrama). Una imagen derecha formada por un espejo cóncavo siempre es virtual.",
+      "Recuerda las diferentes imágenes que forma un espejo cóncavo según la posición del objeto. Revisa tus diagramas de trazado de rayos o la ecuación de espejos.",
+      "Solo hay una posición para el objeto que resulta en una imagen virtual y magnificada. Esta posición se utiliza comúnmente en espejos de maquillaje o para afeitarse."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "2",
+    "internalId": "q-1759082921464-0.8776392160302149",
+    "diagram": {
+      "type": "raster",
+      "src": "images/1759083462577-dofi1w3jddr-Screenshot_20250928_150932.png",
+      "filename": "Screenshot_20250928_150932.png"
+    },
+    "id": "q-ai-cat-1759082921464-0-1"
+  },
+  {
+    "text": "Al ubicar un objeto delante de un lente divergente, se espera que la imagen sea:",
+    "options": [
+      {
+        "text": "Siempre real e invertida."
+      },
+      {
+        "text": "Siempre virtual y derecha."
+      },
+      {
+        "text": "Siempre virtual e invertida."
+      },
+      {
+        "text": "Virtual, o real, derecha o invertida, dependiendo de la ubicación del objeto respecto del lente."
+      },
+      {
+        "text": "De mayor tamaño que el objeto."
+      }
+    ],
+    "correct": 1,
+    "explanation": "A diferencia de las lentes convergentes, que pueden formar una variedad de imágenes, las lentes divergentes (como las lentes cóncavas) siempre producen el mismo tipo de imagen, sin importar dónde se coloque el objeto frente a ellas. La imagen será siempre virtual (formada por la proyección de los rayos divergentes), derecha y de menor tamaño que el objeto.",
+    "hints": [
+      "Una lente divergente siempre hace que los rayos de luz se separen después de pasar a través de ella.",
+      "Dado que los rayos refractados divergen, ¿pueden cruzarse realmente para formar una imagen real? ¿O son sus prolongaciones hacia atrás las que se cruzan? Esto te dirá si la imagen es real o virtual.",
+      "El tipo de imagen (naturaleza, orientación y tamaño relativo) es siempre el mismo. Identifica la opción que describe correctamente este resultado invariable."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "3",
+    "internalId": "q-1759082921464-0.039956466635741705",
+    "id": "q-ai-cat-1759082921464-0-2"
+  },
+  {
+    "text": "El ángulo crítico en la refracción se define como:",
+    "options": [
+      {
+        "text": "El ángulo de incidencia para el cuál el ángulo de refracción tiene un valor de 90°."
+      },
+      {
+        "text": "El ángulo de incidencia para el cuál el ángulo de reflexión tiene un ángulo de 90°."
+      },
+      {
+        "text": "El ángulo requerido para que no exista reflexión."
+      },
+      {
+        "text": "El ángulo para que la rapidez de la onda sea mínimo aire."
+      },
+      {
+        "text": "El ángulo a partir del cual no se produce reflexión, si no solo refracción."
+      }
+    ],
+    "correct": 0,
+    "explanation": "El ángulo crítico es un concepto fundamental asociado al fenómeno de la reflexión interna total. Ocurre cuando la luz viaja de un medio más denso a uno menos denso. Por definición, es el ángulo de incidencia exacto para el cual el ángulo del rayo refractado es de \\(90^\text{o}\\), es decir, el rayo refractado viaja rasante a la superficie de separación de los medios.",
+    "hints": [
+      "El ángulo crítico es un ángulo de incidencia, no de reflexión o refracción.",
+      "Es el punto de transición entre la refracción y la reflexión interna total.",
+      "Visualiza el rayo refractado. A medida que el ángulo de incidencia aumenta, el de refracción también. El ángulo crítico es cuando el rayo refractado llega a su máximo ángulo posible: \\(90^\text{o}\\) con la normal."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "4",
+    "internalId": "q-1759082921464-0.4492553904556341",
+    "id": "q-ai-cat-1759082921464-0-3"
+  },
+  {
+    "text": "Una onda de luz visible monocromática al refractarse desde un medio 1 a un medio 2 se comporta como muestra la figura. Al respecto es correcto afirmar que:",
+    "options": [
+      {
+        "text": "El medio 2 tiene mayor índice de refracción."
+      },
+      {
+        "text": "El medio 2 tiene menor índice de refracción."
+      },
+      {
+        "text": "Ambos medios tienen igual índice de refracción."
+      },
+      {
+        "text": "En el medio 2 la onda tiene mayor frecuencia."
+      },
+      {
+        "text": "En el medio 2 la onda tiene menor frecuencia."
+      }
+    ],
+    "correct": 0,
+    "explanation": "El diagrama muestra que el rayo de luz, al pasar del Medio 1 al Medio 2, se desvía <strong>acercándose</strong> a la línea normal. Según la Ley de Snell, esto ocurre cuando la luz entra en un medio ópticamente más denso, es decir, un medio con un índice de refracción mayor. En este medio, la luz viaja más lentamente.",
+    "hints": [
+      "La frecuencia de la onda nunca cambia al pasar de un medio a otro, lo que descarta las opciones D y E.",
+      "Observa el ángulo del rayo con la línea normal en ambos medios. En el medio 2, el ángulo es menor.",
+      "Regla de Snell: \"ángulo pequeño, índice grande\". Como el ángulo en el medio 2 es menor, su índice de refracción debe ser mayor."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "5",
+    "internalId": "q-1759082921464-0.2825158226313641",
+    "diagram": {
+      "type": "raster",
+      "src": "images/1759083462578-i20ookn58g-Screenshot_20250928_151129.png",
+      "filename": "Screenshot_20250928_151129.png"
+    },
+    "id": "q-ai-cat-1759082921464-0-4"
+  },
+  {
+    "text": "Un haz de luz monocromática pasa de un medio a otro. Conociendo la rapidez de la luz en el vacío, ¿cuál de las siguientes opciones es suficiente para determinar la rapidez de este haz en el segundo medio?",
+    "options": [
+      {
+        "text": "El valor de la frecuencia del haz de luz."
+      },
+      {
+        "text": "El ángulo con que incide el haz de luz en la interfaz."
+      },
+      {
+        "text": "El índice de refracción del segundo medio."
+      },
+      {
+        "text": "El valor del período del haz de luz en el segundo medio."
+      },
+      {
+        "text": "El valor de la longitud de onda del haz de luz en el primer medio."
+      }
+    ],
+    "correct": 2,
+    "explanation": "La rapidez de la luz en un medio (\\(v\\)) está directamente relacionada con la rapidez de la luz en el vacío (\\(c\\)) a través del índice de refracción del medio (\\(n\\)). La fórmula que las une es \\(n = c/v\\). Si ya conocemos '\\(c\\)', la única otra información que necesitamos para calcular '\\(v\\)' es el valor de '\\(n\\)' para ese medio.",
+    "hints": [
+      "Recuerda la definición fundamental del índice de refracción: \\(n = c / v\\).",
+      "El problema te pide determinar \\(v\\). Ya te dan \\(c\\).",
+      "Observa la ecuación. ¿Qué variable te falta por conocer para poder despejar \\(v\\)?"
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "6",
+    "internalId": "q-1759082921464-0.900999599127904",
+    "id": "q-ai-cat-1759082921464-0-5"
+  },
+  {
+    "text": "El objeto de la figura se encuentra en reposo con respecto en una superficie horizontal, donde actúan solo las fuerzas ejercidas por la superficie, la fuerza peso y la fuerza de \\(50\\,\\text{N}\\) indicada en la figura. (Utilice \\(g=10\\,\\text{m/s}^2\\)). Al respecto, y sabiendo que la situación ocurre en el instante en que la fuerza de roce estático alcanza su máximo ¿Cuál de las siguientes afirmaciones es correcta según la información entregada?",
+    "options": [
+      {
+        "text": "La superficie es completamente lisa."
+      },
+      {
+        "text": "La superficie tiene un coeficiente de roce menor que 1."
+      },
+      {
+        "text": "La superficie tiene un coeficiente de roce igual a 1."
+      },
+      {
+        "text": "La superficie tiene un coeficiente de roce mayor a 1."
+      },
+      {
+        "text": "No se puede determinar nada respecto del coeficiente de roce con los datos suministrados."
+      }
+    ],
+    "correct": 1,
+    "explanation": "El problema describe una situación de equilibrio inminente. La fuerza de \\(50\\,\\text{N}\\), aplicada con un ángulo (asumamos \\(45^\text{o}\\) si no se indica, es un ángulo común), debe descomponerse. Su componente horizontal es igualada por el roce estático máximo. Su componente vertical se suma al peso para determinar la fuerza normal. Usando \\(f_{s,max} = \\mu_s \\cdot N\\) podemos despejar \\(\\mu_s\\).",
+    "hints": [
+      "<strong>Descomposición de fuerzas:</strong> Si asumimos un ángulo de \\(45^\text{o}\\), \\(F_x = F_y = 50 \\cdot \\cos(45^\text{o}) \\approx 35.4\\,\\text{N}\\).",
+      "<strong>Equilibrio vertical:</strong> La normal debe soportar el peso y la componente vertical de la fuerza: \\(N = mg + F_y = (5\\,\\text{kg})(10\\,\\text{m/s}^2) + 35.4\\,\\text{N} = 85.4\\,\\text{N}\\).",
+      "<strong>Equilibrio horizontal:</strong> El roce máximo es igual a la componente horizontal: \\(f_{s,max} = F_x = 35.4\\,\\text{N}\\). Usando \\(f_{s,max} = \\mu_s \\cdot N\\), despejamos \\(\\mu_s = 35.4\\,\\text{N} / 85.4\\,\\text{N} \\approx 0.41\\). Este valor es menor que 1. (Nota: cualquier ángulo entre \\(0^\text{o}\\) y \\(90^\text{o}\\) dará un coeficiente menor que 1)."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "7",
+    "internalId": "q-1759082921464-0.06848199398967791",
+    "diagram": {
+      "type": "raster",
+      "src": "images/1759083462578-uqjsylverq-Screenshot_20250928_151205.png",
+      "filename": "Screenshot_20250928_151205.png"
+    },
+    "id": "q-ai-cat-1759082921464-1-0"
+  },
+  {
+    "text": "Suponiendo que las poleas y cuerdas de la figura son ideales. ¿Cuál de los siguientes coeficientes de roce entre la superficie horizontal y el cuerpo de \\(10\\,\\text{kg}\\), cumple con ser el mínimo para que el sistema se mantenga en equilibrio?",
+    "options": [
+      {
+        "text": "0,3"
+      },
+      {
+        "text": "0,4"
+      },
+      {
+        "text": "0,6"
+      },
+      {
+        "text": "0,7"
+      },
+      {
+        "text": "0,8"
+      }
+    ],
+    "correct": 4,
+    "explanation": "El bloque central está sometido a dos tensiones opuestas, generadas por los pesos de los bloques colgantes. La fuerza neta que tiende a moverlo es la diferencia entre estas tensiones. Para que el sistema se mantenga en equilibrio, la fuerza de roce estático máxima debe ser, como mínimo, igual a esta fuerza neta.",
+    "hints": [
+      "Calcula las fuerzas de tensión: \\(T_{\\text{izquierda}} = m_{\\text{izq}} \\cdot g = 20\\,\\text{kg} \\cdot 10\\,\\text{m/s}^2 = 200\\,\\text{N}\\). \\(T_{\\text{derecha}} = m_{\\text{der}} \\cdot g = 12\\,\\text{kg} \\cdot 10\\,\\text{m/s}^2 = 120\\,\\text{N}\\).",
+      "Determina la fuerza neta que tiende a mover el bloque: \\(F_{\\text{neta\\_horizontal}} = 200\\,\\text{N} - 120\\,\\text{N} = 80\\,\\text{N}\\) (hacia la izquierda).",
+      "La fuerza de roce estático máxima debe ser al menos \\(80\\,\\text{N}\\) para evitar el movimiento. Calcula la fuerza normal sobre el bloque central: \\(N = m_{\\text{centro}} \\cdot g = 10\\,\\text{kg} \\cdot 10\\,\\text{m/s}^2 = 100\\,\\text{N}\\). Usa la fórmula \\(f_{s,max} = \\mu_s \\cdot N\\) para encontrar el coeficiente mínimo: \\(80\\,\\text{N} = \\mu_s \\cdot 100\\,\\text{N}\\). Despeja \\(\\mu_s\\)."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "8",
+    "internalId": "q-1759082921464-0.7354959161604308",
+    "diagram": {
+      "type": "raster",
+      "src": "images/1759083462578-07suglisbyi3-Screenshot_20250928_151215.png",
+      "filename": "Screenshot_20250928_151215.png"
+    },
+    "id": "q-ai-cat-1759082921464-1-1"
+  },
+  {
+    "text": "Sobre una caja que se desliza con velocidad constante, en una superficie plana y horizontal, además de las fuerzas peso y normal actúan la fuerza de roce y una fuerza \\(F\\) paralela a la superficie. En el instante \\(t_1\\) la superficie cambia de rugosidad, pero la caja continúa con la misma velocidad constante. Con esta información, ¿cuál de los siguientes gráficos de la magnitud de la fuerza \\(F\\) en función del tiempo es compatible con la situación descrita?",
+    "options": [
+      {
+        "text": "Un gráfico que aumenta linealmente.",
+        "diagram": {
+          "type": "raster",
+          "src": "images/1759083462578-r6rjgkd8sk-Screenshot_20250928_151427.png",
+          "filename": "Screenshot_20250928_151427.png"
+        }
+      },
+      {
+        "text": "Un gráfico con dos segmentos horizontales, con un salto vertical en \\(t_1\\).",
+        "diagram": {
+          "type": "raster",
+          "src": "images/1759083462578-yy57pmifi7-Screenshot_20250928_151436.png",
+          "filename": "Screenshot_20250928_151436.png"
+        }
+      },
+      {
+        "text": "Un gráfico que disminuye linealmente.",
+        "diagram": {
+          "type": "raster",
+          "src": "images/1759083462578-caj5hjajeo6-Screenshot_20250928_151443.png",
+          "filename": "Screenshot_20250928_151443.png"
+        }
+      },
+      {
+        "text": "Un gráfico que se mantiene constante sin cambios.",
+        "diagram": {
+          "type": "raster",
+          "src": "images/1759083462578-mxtbbo969v-Screenshot_20250928_151449.png",
+          "filename": "Screenshot_20250928_151449.png"
+        }
+      },
+      {
+        "text": "Un gráfico que es una curva parabólica.",
+        "diagram": {
+          "type": "raster",
+          "src": "images/1759083462578-f75zdejtot-Screenshot_20250928_151456.png",
+          "filename": "Screenshot_20250928_151456.png"
+        }
+      }
+    ],
+    "correct": 1,
+    "explanation": "La clave es la \"velocidad constante\". Según la Primera Ley de Newton, esto implica que la fuerza neta es cero en todo momento. Por lo tanto, la fuerza aplicada \\(F\\) debe ser siempre igual en magnitud a la fuerza de roce. Si en \\(t_1\\) la rugosidad cambia, la fuerza de roce cambia instantáneamente. Para mantener la velocidad constante, la fuerza \\(F\\) debe ajustarse instantáneamente para igualar el nuevo valor del roce. El gráfico debe mostrar un salto vertical de un valor constante a otro.",
+    "hints": [
+      "Si \\(v = \\text{constante}\\), entonces \\(F_{\\text{neta}} = 0\\), lo que significa \\(F_{\\text{aplicada}} = F_{\\text{roce}}\\\\).",
+      "Antes de \\(t_1\\), el roce es constante, por lo tanto, \\(F\\) debe ser constante (línea horizontal).",
+      "Después de \\(t_1\\), el roce cambia a un nuevo valor, pero también constante, por lo que \\(F\\) debe cambiar a un nuevo valor constante (otra línea horizontal). El cambio es instantáneo en \\(t_1\\), por lo que el gráfico debe mostrar una discontinuidad o un \"salto\" vertical."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "9",
+    "internalId": "q-1759082921464-0.024634170641704922",
+    "id": "q-ai-cat-1759082921464-1-2"
+  },
+  {
+    "text": "¿Cuál de los siguientes gráficos es el que mejor representa cómo cambia el módulo de la fuerza de roce con el aire \\(F\\) que se ejerce sobre un cuerpo que cae desde una altura lo suficientemente grande, respecto de la distancia \\(r\\) que recorre al ir cayendo?",
+    "options": [
+      {
+        "text": "Un gráfico que parte del origen y aumenta linealmente.",
+        "diagram": {
+          "type": "raster",
+          "src": "images/1759083462578-yfrcl065uf-Screenshot_20250928_151555.png",
+          "filename": "Screenshot_20250928_151555.png"
+        }
+      },
+      {
+        "text": "Un gráfico que parte del origen y aumenta exponencialmente.",
+        "diagram": {
+          "type": "raster",
+          "src": "images/1759083462578-db0z9fogb8j-Screenshot_20250928_151603.png",
+          "filename": "Screenshot_20250928_151603.png"
+        }
+      },
+      {
+        "text": "Un gráfico que parte del origen y disminuye.",
+        "diagram": {
+          "type": "raster",
+          "src": "images/1759083462578-hne9d5c2zu6-Screenshot_20250928_151640.png",
+          "filename": "Screenshot_20250928_151640.png"
+        }
+      },
+      {
+        "text": "Un gráfico que se mantiene constante en un valor distinto de cero.",
+        "diagram": {
+          "type": "raster",
+          "src": "images/1759083462578-w01h85svuzd-Screenshot_20250928_151647.png",
+          "filename": "Screenshot_20250928_151647.png"
+        }
+      },
+      {
+        "text": "Un gráfico que parte del origen, aumenta con pendiente decreciente y tiende a una asíntota horizontal.",
+        "diagram": {
+          "type": "raster",
+          "src": "images/1759083462578-pphl8bmxoap-Screenshot_20250928_151655.png",
+          "filename": "Screenshot_20250928_151655.png"
+        }
+      }
+    ],
+    "correct": 4,
+    "explanation": "Cuando un objeto cae, su velocidad aumenta debido a la gravedad. La fuerza de roce con el aire (\\(F\\)) no es constante, sino que aumenta a medida que la velocidad aumenta. Por lo tanto, a medida que la distancia de caída \\(r\\) aumenta, la velocidad aumenta y \\(F\\) también aumenta. Sin embargo, este aumento no es lineal. A medida que \\(F\\) se acerca al valor del peso, la aceleración neta disminuye, por lo que la velocidad aumenta cada vez más lentamente. Esto hace que el gráfico \\(F\\) vs \\(r\\) se curve y tienda a un valor máximo (asíntota horizontal).",
+    "hints": [
+      "Al inicio de la caída (\\(r=0\\)), la velocidad es cero, por lo tanto, la fuerza de roce \\(F\\) es cero. El gráfico debe partir del origen (0,0).",
+      "A medida que \\(r\\) aumenta, la velocidad aumenta, por lo tanto, \\(F\\) debe aumentar.",
+      "La aceleración disminuye a medida que \\(F\\) aumenta. Esto significa que la velocidad (y por lo tanto \\(F\\)) no aumenta linealmente con la distancia. La pendiente del gráfico \\(F\\) vs \\(r\\) debe disminuir a medida que \\(r\\) aumenta. Finalmente, la fuerza de roce se estabiliza cuando se alcanza la velocidad terminal. El gráfico debe tender a un valor constante (una asíntota horizontal)."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "10",
+    "internalId": "q-1759082921464-0.3473522501485522",
+    "id": "q-ai-cat-1759082921464-1-3"
+  },
+  {
+    "text": "Un par de cuerpos de masa \\(M\\,\\text{kg}\\) y \\(m\\,\\text{kg}\\) están unidos por medio de una cuerda y polea ideales en un planeta donde la magnitud de la aceleración de gravedad es \\(g\\,\\text{m/s}^2\\). La superficie es completamente lisa y horizontal. La tensión de la cuerda tiene una magnitud en Newtons de:",
+    "options": [
+      {
+        "text": "\\(mg\\)"
+      },
+      {
+        "text": "\\(Mg\\)"
+      },
+      {
+        "text": "\\(\\frac{mM}{(m+M)} g\\)"
+      },
+      {
+        "text": "\\(\\frac{(m+M)}{mM} g\\)"
+      },
+      {
+        "text": "\\(Mg - mg\\)"
+      }
+    ],
+    "correct": 2,
+    "explanation": "Este es un problema clásico de la máquina de Atwood modificada. Para encontrar la tensión, el método más sistemático es primero calcular la aceleración \\(a\\) de todo el sistema y luego aplicar la Segunda Ley de Newton a una de las masas individualmente.",
+    "hints": [
+      "<strong>Paso 1 (Aceleración del sistema):</strong> La fuerza neta que mueve todo es el peso de la masa colgante (\\(mg\\)). La masa total acelerada es (\\(M+m\\)). Usa \\(F_{\\text{neta}} = M_{\\text{total}} \\cdot a\\) para encontrar \\(a = \\frac{mg}{(M+m)}\\).",
+      "<strong>Paso 2 (Análisis de una masa):</strong> Aísla la masa \\(M\\) que está sobre la mesa. La única fuerza horizontal que actúa sobre ella es la tensión \\(T\\).",
+      "Aplica la Segunda Ley de Newton a la masa \\(M\\): \\(T = M \\cdot a\\). Sustituye la expresión para \\(a\\) que encontraste en el primer paso y simplifica algebraicamente."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "11",
+    "internalId": "q-1759082921464-0.22946458799862446",
+    "diagram": {
+      "type": "raster",
+      "src": "images/1759083462578-4og8z08rebf-Screenshot_20250928_151303.png",
+      "filename": "Screenshot_20250928_151303.png"
+    },
+    "id": "q-ai-cat-1759082921464-1-4"
+  },
+  {
+    "text": "¿Cuál de las siguientes afirmaciones acerca de la hidrosfera es correcta?",
+    "options": [
+      {
+        "text": "Junto a la atmosfera es determinante para el clima."
+      },
+      {
+        "text": "Disminuye su masa progresivamente."
+      },
+      {
+        "text": "Se encuentra únicamente en fase líquida."
+      },
+      {
+        "text": "Es la única capa fluida de nuestro planeta."
+      },
+      {
+        "text": "Corresponde a la parte exterior de la geosfera."
+      }
+    ],
+    "correct": 0,
+    "explanation": "La hidrosfera (toda el agua de la Tierra) y la atmósfera interactúan constantemente a través del ciclo del agua y las corrientes oceánicas, transfiriendo enormes cantidades de energía y materia. Esta interacción es el motor principal del clima global y los fenómenos meteorológicos.",
+    "hints": [
+      "Evalúa cada opción. ¿La hidrosfera solo existe en estado líquido? (Piensa en el hielo y el vapor). ¿Es la única capa fluida? (Piensa en la atmósfera y el manto).",
+      "La masa de la hidrosfera es esencialmente constante en escalas de tiempo humanas.",
+      "Considera el papel de los océanos en la regulación de la temperatura global y la formación de tormentas. Esto demuestra su rol fundamental junto a la atmósfera en la determinación del clima."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "12",
+    "internalId": "q-1759082921464-0.49882489492160076",
+    "id": "q-ai-cat-1759082921464-2-0"
+  },
+  {
+    "text": "¿Qué no caracteriza a una zona de divergencia entre placas oceánicas?",
+    "options": [
+      {
+        "text": "La presencia de cordones montañosos submarinos."
+      },
+      {
+        "text": "La generación de una zona de separación entre placas."
+      },
+      {
+        "text": "La generación de fosas oceánicas."
+      },
+      {
+        "text": "La presencia de dorsales oceánicas."
+      },
+      {
+        "text": "La presencia de actividad sísmica en la zona, aunque podría ser muy baja."
+      }
+    ],
+    "correct": 2,
+    "explanation": "En los límites divergentes, las placas tectónicas se separan, creando dorsales o cordilleras submarinas donde asciende magma. Este proceso genera nueva corteza y está asociado con sismicidad. Las fosas oceánicas, las depresiones más profundas del océano, son características de los límites <strong>convergentes</strong>, donde una placa se subduce (hunde) debajo de otra.",
+    "hints": [
+      "Asocia \"divergencia\" con \"creación\" de corteza y \"separación\". Esto confirma B, D y A (las dorsales son cordones montañosos).",
+      "Todo movimiento de placas genera sismicidad, lo que confirma E.",
+      "Asocia \"fosas\" con \"destrucción\" de corteza o subducción, que es un proceso de convergencia, no de divergencia."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "13",
+    "internalId": "q-1759082921464-0.7933483978750786",
+    "id": "q-ai-cat-1759082921464-2-1"
+  },
+  {
+    "text": "En el circuito de la figura, si la fuente entrega un voltaje contante igual a \\(20\\,\\text{V}\\), \\(R_1\\) es de \\(4\\,\\Omega\\) e \\(i_1\\) es de \\(2\\,\\text{A}\\). ¿Cuál es la diferencia de potencial en \\(R_2\\)?",
+    "options": [
+      {
+        "text": "20 V"
+      },
+      {
+        "text": "6 V"
+      },
+      {
+        "text": "12 V"
+      },
+      {
+        "text": "8 V"
+      },
+      {
+        "text": "10 V"
+      }
+    ],
+    "correct": 2,
+    "explanation": "El circuito muestra dos resistencias en serie. En una conexión en serie, la suma de las caídas de voltaje en cada resistencia es igual al voltaje total de la fuente. Con los datos proporcionados, se puede calcular el voltaje en \\(R_1\\) y luego, por diferencia, deducir el voltaje en \\(R_2\\).",
+    "hints": [
+      "Calcula la caída de potencial (voltaje) a través de \\(R_1\\) usando la Ley de Ohm: \\(V_1 = i_1 \\cdot R_1\\).",
+      "Recuerda la Ley de Voltajes de Kirchhoff para circuitos en serie: \\(V_{\\text{fuente}} = V_1 + V_2\\).",
+      "Conociendo \\(V_{\\text{fuente}}\\) y habiendo calculado \\(V_1\\), despeja \\(V_2\\) para encontrar la diferencia de potencial que se pide."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "14",
+    "internalId": "q-1759082921464-0.7934562623050946",
+    "diagram": {
+      "type": "raster",
+      "src": "images/1759083462578-35ttmikr1ia-Screenshot_20250928_151347.png",
+      "filename": "Screenshot_20250928_151347.png"
+    },
+    "id": "q-ai-cat-1759082921464-3-0"
+  },
+  {
+    "text": "En un circuito domiciliario tradicional, a medida que se conectan aparatos a la red, la resistencia del circuito:",
+    "options": [
+      {
+        "text": "Se mantiene constante ya que están conectados en serie."
+      },
+      {
+        "text": "Se mantiene constante ya que están conectados en paralelo."
+      },
+      {
+        "text": "Disminuye ya que están conectados en serie."
+      },
+      {
+        "text": "Disminuye ya que están conectados en paralelo."
+      },
+      {
+        "text": "Aumenta ya que están conectados en paralelo."
+      }
+    ],
+    "correct": 3,
+    "explanation": "Los aparatos en una instalación domiciliaria se conectan en paralelo para que todos reciban el mismo voltaje. Al agregar más aparatos en paralelo, se están creando más caminos para que la corriente fluya desde la fuente. Ofrecer más rutas facilita el flujo total de corriente, lo que significa que la resistencia total (o equivalente) del circuito disminuye.",
+    "hints": [
+      "Primero, reconoce que los circuitos domésticos son en paralelo. Esto elimina las opciones A y C.",
+      "Piensa en una analogía: si hay una sola puerta para salir de una sala, hay mucha \"resistencia\" al flujo de personas. Si abres más puertas (caminos en paralelo), el flujo total de personas aumenta, lo que significa que la resistencia total al paso ha disminuido.",
+      "Matemáticamente, la fórmula para la resistencia equivalente en paralelo es \\(1/R_{\\text{eq}} = 1/R_1 + 1/R_2 + \\dots\\). Al añadir más términos (más aparatos), el valor de \\(1/R_{\\text{eq}}\\) aumenta, lo que necesariamente significa que el valor de \\(R_{\\text{eq}}\\) disminuye."
+    ],
+    "sourceFileName": "Text Input",
+    "originalQuestionNumber": "15",
+    "internalId": "q-1759082921464-0.40191576368346205",
+    "id": "q-ai-cat-1759082921464-3-1"
+  }
+];
+        const categories = [
+  {
+    "id": "ai-cat-1759082921464-0",
+    "title": "Ondas (Óptica Geométrica)",
+    "description": "<p>Esta sección se enfoca en la <strong>Óptica Geométrica</strong>, explorando cómo la luz interactúa con espejos y lentes, y los fenómenos de refracción. Los conceptos clave incluyen:</p><ul><li><strong>Espejos Planos:</strong> Siempre forman imágenes <strong>virtuales, derechas y del mismo tamaño</strong> que el objeto. La imagen se percibe detrás del espejo.</li><li><strong>Espejos Cóncavos:</strong> La naturaleza de la imagen (real o virtual, derecha o invertida, aumentada o disminuida) depende de la posición del objeto respecto al foco (\\(F\\)) y el centro de curvatura (\\(C\\)). Una imagen <strong>virtual, derecha y magnificada</strong> se forma cuando el objeto está entre el foco y el vértice.</li><li><strong>Lentes Divergentes:</strong> Siempre producen imágenes <strong>virtuales, derechas y de menor tamaño</strong>, independientemente de la posición del objeto.</li><li><strong>Refracción:</strong> Es el cambio de dirección que experimenta una onda al pasar de un medio a otro. La <strong>Ley de Snell</strong> (\\(n_1 \t\\text{sen}\t\\theta_1 = n_2 \t\\text{sen}\t\\theta_2\\)) rige este fenómeno.</li><li><strong>Ángulo Crítico:</strong> Es el ángulo de incidencia en el cual el ángulo de refracción es de \\(90^\t\\text{o}\\), ocurriendo cuando la luz pasa de un medio más denso a uno menos denso. Más allá de este ángulo, se produce la <strong>reflexión interna total</strong>.</li><li><strong>Índice de Refracción (\\(n\\)):</strong> Se define como la relación entre la rapidez de la luz en el vacío (\\(c\\)) y la rapidez de la luz en un medio (\\(v\\)), es decir, \\(n = c/v\\). Un mayor índice de refracción implica una menor rapidez de la luz en ese medio. La <strong>frecuencia</strong> de la luz no cambia al pasar de un medio a otro.</li></ul>",
+    "summaryKey": "ai-cat-1759082921464-0",
+    "problem_ids": [
+      "q-ai-cat-1759082921464-0-0",
+      "q-ai-cat-1759082921464-0-1",
+      "q-ai-cat-1759082921464-0-2",
+      "q-ai-cat-1759082921464-0-3",
+      "q-ai-cat-1759082921464-0-4",
+      "q-ai-cat-1759082921464-0-5"
+    ]
+  },
+  {
+    "id": "ai-cat-1759082921464-1",
+    "title": "Mecánica",
+    "description": "<p>Esta sección aborda conceptos fundamentales de la <strong>Dinámica</strong>, centrándose en las interacciones de fuerzas, el movimiento y el equilibrio de los objetos. Los principios clave a considerar son:</p><ul><li><strong>Fricción Estática y Cinética:</strong> La fuerza de roce estático (\\(f_{s}\\)) se opone al inicio del movimiento y su valor máximo es \\(f_{s,max} = \\mu_s N\\), donde \\(\\mu_s\\) es el coeficiente de roce estático y \\(N\\) es la fuerza normal. La fuerza de roce cinético (\\(f_k\\)) actúa sobre objetos en movimiento y es \\(f_k = \\mu_k N\\).</li><li><strong>Leyes de Newton:</strong><ul><li><strong>Primera Ley (Inercia):</strong> Un objeto en reposo permanece en reposo, y un objeto en movimiento continúa en movimiento con velocidad constante, a menos que una fuerza neta actúe sobre él. Esto implica que si \\(v = \\text{constante}\\), la fuerza neta es cero (\\(\\sum \\vec{F} = 0\\)).</li><li><strong>Segunda Ley (Fuerza y Aceleración):</strong> La fuerza neta que actúa sobre un objeto es igual al producto de su masa por su aceleración (\\(\\sum \\vec{F} = m\\vec{a}\\)).</li><li><strong>Tercera Ley (Acción y Reacción):</strong> Para cada acción, hay una reacción igual y opuesta.</li></ul></li><li><strong>Descomposición de Fuerzas:</strong> Cuando las fuerzas actúan en un ángulo, es esencial descomponerlas en componentes horizontal y vertical para aplicar las leyes de Newton en cada dirección de forma independiente.</li><li><strong>Sistemas de Masas y Poleas Ideales:</strong> En estos sistemas, las poleas y cuerdas se consideran sin masa ni fricción, y la tensión es uniforme a lo largo de la cuerda. La aceleración del sistema se calcula considerando la fuerza neta que mueve la masa total.</li><li><strong>Roce con el Aire (Fuerza de Arrastre):</strong> Esta fuerza depende de la velocidad del objeto, el área de la sección transversal, la densidad del aire y un coeficiente de arrastre. A medida que la velocidad de un objeto que cae aumenta, la fuerza de roce con el aire también aumenta, hasta que puede alcanzar una <strong>velocidad terminal</strong> cuando la fuerza de arrastre se iguala al peso del objeto.</li></ul>",
+    "summaryKey": "ai-cat-1759082921464-1",
+    "problem_ids": [
+      "q-ai-cat-1759082921464-1-0",
+      "q-ai-cat-1759082921464-1-1",
+      "q-ai-cat-1759082921464-1-2",
+      "q-ai-cat-1759082921464-1-3",
+      "q-ai-cat-1759082921464-1-4"
+    ]
+  },
+  {
+    "id": "ai-cat-1759082921464-2",
+    "title": "Ciencias de la Tierra",
+    "description": "<p>Esta sección se centra en conceptos fundamentales de las <strong>Ciencias de la Tierra</strong>, específicamente en las características de la hidrosfera y la dinámica de la tectónica de placas. Los puntos clave incluyen:</p><ul><li><strong>Hidrosfera:</strong> Comprende toda el agua del planeta en sus diferentes estados (líquido, sólido, gaseoso). Su interacción con la <strong>atmósfera</strong> es crucial para la determinación del clima global y los patrones meteorológicos, a través de fenómenos como el ciclo del agua y las corrientes oceánicas que redistribuyen el calor.</li><li><strong>Tectónica de Placas (Límites Divergentes):</strong> Son zonas donde las placas tectónicas se separan una de otra. Las características asociadas a estos límites oceánicos son:<ul><li><strong>Cordones montañosos submarinos o dorsales oceánicas:</strong> Son cadenas montañosas que se forman por el ascenso de magma y la creación de nueva corteza oceánica.</li><li><strong>Zona de separación:</strong> Se genera un \"rift\" o valle central por donde el magma emerge.</li><li><strong>Actividad sísmica:</strong> Aunque generalmente de baja magnitud, la separación de placas genera sismos.</li></ul></li><li><strong>Fosas Oceánicas:</strong> A diferencia de los límites divergentes, las fosas oceánicas son depresiones profundas en el le fondo oceánico que se forman en los <strong>límites convergentes</strong>, donde una placa oceánica se subduce (se hunde) debajo de otra placa (oceánica o continental).</li></ul>",
+    "summaryKey": "ai-cat-1759082921464-2",
+    "problem_ids": [
+      "q-ai-cat-1759082921464-2-0",
+      "q-ai-cat-1759082921464-2-1"
+    ]
+  },
+  {
+    "id": "ai-cat-1759082921464-3",
+    "title": "Circuitos Eléctricos",
+    "description": "<p>Esta sección se dedica a los principios básicos de los <strong>Circuitos Eléctricos</strong>, cubriendo la Ley de Ohm, las leyes de Kirchhoff y las características de las conexiones en serie y paralelo, que son fundamentales para entender cómo funciona la electricidad en aplicaciones prácticas como las instalaciones domiciliarias. Los conceptos clave son:</p><ul><li><strong>Ley de Ohm:</strong> Relaciona el voltaje (\\(V\\)), la corriente (\\(i\\)) y la resistencia (\\(R\\)) en un circuito. Se expresa como \\(V = iR\\).</li><li><strong>Ley de Voltajes de Kirchhoff (LVK):</strong> Establece que la suma algebraica de las diferencias de potencial (voltajes) alrededor de cualquier lazo cerrado en un circuito es igual a cero. Para un circuito en serie con una fuente, \\(V_{\\text{fuente}} = V_1 + V_2 + \\dots + V_n\\).</li><li><strong>Circuitos en Serie:</strong><ul><li>La corriente es la misma a través de cada componente.</li><li>El voltaje total se divide entre los componentes.</li><li>La resistencia equivalente es la suma de las resistencias individuales: \\(R_{\\text{eq}} = R_1 + R_2 + \\dots + R_n\\).</li></ul></li><li><strong>Circuitos en Paralelo:</strong><ul><li>El voltaje es el mismo a través de cada rama del circuito (cada componente recibe el voltaje de la fuente).</li><li>La corriente total se divide entre las ramas.</li><li>La inversa de la resistencia equivalente es la suma de las inversas de las resistencias individuales: \\(\\frac{1}{R_{\\text{eq}}} = \\frac{1}{R_1} + \\frac{1}{R_2} + \\dots + \\frac{1}{R_n}\\). Esto implica que al añadir más resistencias en paralelo, la resistencia total equivalente del circuito <strong>disminuye</strong>. Las instalaciones domiciliarias utilizan conexiones en paralelo.</li></ul></li></ul>",
+    "summaryKey": "ai-cat-1759082921464-3",
+    "problem_ids": [
+      "q-ai-cat-1759082921464-3-0",
+      "q-ai-cat-1759082921464-3-1"
+    ]
+  }
+];
+
+        const problemsById = {};
+        allProblemsData.forEach(p => { problemsById[p.id] = p; });
+        
+        let currentQuizProblems = [];
+        let currentCategory = null;
+        let completedCategories = JSON.parse(localStorage.getItem('completedQuizCategories')) || {};
+        let currentProblemIndex = 0;
+        let score = 0;
+        
+        const categorySelectionScreen = document.getElementById('category-selection-screen');
+        const categoryListEl = document.getElementById('category-list');
+        const overallProgressContainer = document.getElementById('overall-progress-container');
+        const overallScoreEl = document.getElementById('overall-score');
+        const showFinalResultsBtn = document.getElementById('show-final-results-btn');
+        const quizWrapperEl = document.getElementById('quiz-wrapper');
+        const summaryContainerEl = document.getElementById('summary-container');
+        const summaryContinueBtn = document.getElementById('summary-continue-btn');
+        const quizContainerEl = document.getElementById('quiz-container');
+        const headerEl = document.getElementById('problem-header');
+        const questionEl = document.getElementById('question-container');
+        const graphEl = document.getElementById('graph-container');
+        const optionsEl = document.getElementById('options-container');
+        const hintsEl = document.getElementById('hints-container');
+        const feedbackEl = document.getElementById('feedback-container');
+        const nextButton = document.getElementById('next-button');
+        const progressBar = document.getElementById('progress-bar');
+        const scoreCounterEl = document.getElementById('score-counter');
+        const finalScreenEl = document.getElementById('final-screen');
+        const backToMenuBtn = document.getElementById('back-to-menu-btn');
+
+        function renderCategoryScreen() {
+            categoryListEl.innerHTML = '';
+            let totalCompleted = 0;
+            let totalPossibleScore = 0;
+            let totalUserScore = 0;
+
+            categories.forEach(cat => {
+                const li = document.createElement('li');
+                li.className = 'category-item';
+                li.dataset.categoryId = cat.id;
+                
+                const catProgress = completedCategories[cat.id];
+                let progressHTML = '';
+                if(catProgress) {
+                    li.classList.add('completed');
+                    if (catProgress.total > 0) {
+                        progressHTML = `<div class="progress-info">Completado: ${catProgress.score}/${catProgress.total}</div>`;
+                    }
+                    totalCompleted++;
+                    totalUserScore += catProgress.score;
+                    totalPossibleScore += cat.problem_ids.length;
+                }
+
+                li.innerHTML = `<h3>${cat.title}</h3><p>${cat.description.replace(/<[^>]*>?/gm, '').substring(0, 100)}...</p>${progressHTML}`;
+                li.onclick = () => {
+                    if (!li.classList.contains('completed')) {
+                        startCategory(cat.id);
+                    }
+                };
+                categoryListEl.appendChild(li);
+            });
+
+            if (Object.keys(completedCategories).length > 0) {
+                overallProgressContainer.classList.remove('hidden');
+                overallScoreEl.textContent = `Puntaje total: ${totalUserScore} de ${totalPossibleScore} correctas. Secciones completadas: ${totalCompleted} de ${categories.length}.`;
+            } else {
+                 overallProgressContainer.classList.add('hidden');
+            }
+
+            if (totalCompleted === categories.length && categories.length > 0) {
+                showFinalResultsBtn.classList.remove('hidden');
+            } else {
+                showFinalResultsBtn.classList.add('hidden');
+            }
+
+            quizWrapperEl.classList.add('hidden');
+            categorySelectionScreen.classList.remove('hidden');
+        }
+
+        function startCategory(categoryId) {
+            currentCategory = categories.find(c => c.id === categoryId);
+            if (!currentCategory) return;
+            
+            categorySelectionScreen.classList.add('hidden');
+            quizWrapperEl.classList.remove('hidden');
+
+            currentQuizProblems = currentCategory.problem_ids.map(id => problemsById[id]);
+            currentProblemIndex = 0;
+            score = 0;
+            
+            showSummary(currentCategory.id);
+        }
+
+        function showSummary(summaryKey) {
+            const summary = summaries[summaryKey];
+            if (!summary) {
+                 summaryContinueBtn.onclick(); return;
+            }
+            
+            const summaryTitleEl = document.getElementById('summary-title');
+            const keyConceptsEl = document.getElementById('summary-key-concepts');
+            const tipsListEl = document.getElementById('summary-tips-list');
+    
+            summaryTitleEl.textContent = `Preparación para: ${summary.title}`;
+            keyConceptsEl.innerHTML = summary.key_concepts_html;
+            
+            tipsListEl.innerHTML = '';
+            summary.tips.forEach(tip => {
+                const li = document.createElement('li');
+                li.textContent = tip;
+                tipsListEl.appendChild(li);
+            });
+            
+            renderMath();
+            quizContainerEl.classList.add('hidden');
+            finalScreenEl.classList.add('hidden');
+            summaryContainerEl.classList.remove('hidden');
+        }
+
+        summaryContinueBtn.onclick = () => {
+            summaryContainerEl.classList.add('hidden');
+            if (currentQuizProblems && currentQuizProblems.length > 0) {
+                quizContainerEl.classList.remove('hidden');
+                renderProblem(currentProblemIndex);
+            } else {
+                endOfCategory();
+            }
+        };
+        
+        function renderProblem(index) {
+            optionsEl.innerHTML = '';
+            hintsEl.innerHTML = '';
+            feedbackEl.style.display = 'none';
+            nextButton.classList.remove('visible');
+            graphEl.innerHTML = '';
+            optionsEl.className = '';
+
+            const problem = currentQuizProblems[index];
+            if (!problem) {
+                console.error("Could not find problem for index:", index, "in category:", currentCategory.title);
+                questionEl.innerHTML = "Error: No se pudo cargar la pregunta. Verifique que los datos sean correctos.";
+                return;
+            }
+
+            headerEl.textContent = `Pregunta ${index + 1} de ${currentQuizProblems.length}`;
+            questionEl.innerHTML = problem.text;
+            progressBar.style.width = `${((index) / currentQuizProblems.length) * 100}%`;
+            scoreCounterEl.textContent = `✅ Puntos: ${score}`;
+            
+            if (problem.diagram) {
+                graphEl.style.display = 'block';
+                graphEl.innerHTML = renderDiagram(problem.diagram);
+            } else {
+                graphEl.style.display = 'none';
+            }
+            
+            const optionsHaveDiagrams = problem.options.some(opt => opt.diagram);
+
+            if (optionsHaveDiagrams) {
+                 optionsEl.className = 'options-grid-with-graphs';
+                 problem.options.forEach((opt, i) => createOptionBlock(opt, i));
+            } else {
+                 problem.options.forEach((opt, i) => createOptionButton(opt, i));
+            }
+
+            if (problem.hints && problem.hints.length > 0) {
+                problem.hints.forEach((hint, i) => {
+                    const button = document.createElement('button');
+                    button.className = 'hint-button';
+                    button.textContent = `💡 Revelar Pista ${i + 1}`;
+                    button.dataset.hintIndex = i;
+                    if (i > 0) {
+                        button.disabled = true;
+                    }
+                    button.onclick = (e) => {
+                        const clickedButton = e.currentTarget;
+                        const hintContent = document.createElement('div');
+                        hintContent.className = 'hint-content';
+                        hintContent.innerHTML = hint;
+                        clickedButton.replaceWith(hintContent);
+                        
+                        const nextHintButton = hintsEl.querySelector('.hint-button');
+                        if (nextHintButton) {
+                            nextHintButton.disabled = false;
+                        }
+                        renderMath();
+                    };
+                    hintsEl.appendChild(button);
+                });
+            }
+
+            renderMath();
+        }
+        
+        function createOptionButton(option, index) {
+            const button = document.createElement('button');
+            button.className = 'option-button';
+            button.dataset.index = index;
+            button.innerHTML = `<span class="label">${String.fromCharCode(65 + index)})</span> <span class="value">${option.text || ''}</span>`;
+            button.onclick = handleOptionClick;
+            optionsEl.appendChild(button);
+        }
+        
+        function createOptionBlock(option, index) {
+            const optionBlock = document.createElement('div');
+            optionBlock.className = 'option-block-graph';
+            optionBlock.dataset.index = index;
+            optionBlock.onclick = handleOptionClick;
+            let diagramHTML = option.diagram ? `<div class="option-graph-canvas-container">${renderDiagram(option.diagram)}</div>` : '';
+            optionBlock.innerHTML = `<div class="label">${String.fromCharCode(65 + index)}) ${option.text || ''}</div> ${diagramHTML}`;
+            optionsEl.appendChild(optionBlock);
+        }
+
+        function handleOptionClick(event) {
+            const problem = currentQuizProblems[currentProblemIndex];
+            const selectedIndex = parseInt(event.currentTarget.dataset.index, 10);
+            const correctIndex = problem.correct;
+            
+            const correctButton = document.querySelector(`[data-index="${correctIndex}"]`);
+            if (correctButton) correctButton.classList.add('correct');
+            
+            let isAnswerCorrect = false;
+            const selectedButton = event.currentTarget;
+            if (selectedIndex === correctIndex) {
+                score++;
+                isAnswerCorrect = true;
+            } else {
+                selectedButton.classList.add('incorrect');
+            }
+            
+            scoreCounterEl.textContent = `✅ Puntos: ${score}`;
+            document.querySelectorAll('.option-button, .option-block-graph').forEach(btn => { btn.classList.add('disabled'); btn.onclick = null; });
+            progressBar.style.width = `${((currentProblemIndex + 1) / currentQuizProblems.length) * 100}%`;
+            
+            feedbackEl.className = isAnswerCorrect ? 'feedback-container correct' : 'feedback-container incorrect';
+            const feedbackTitle = isAnswerCorrect ? `<div id="feedback-title">${icons.check} Correcto</div>` : `<div id="feedback-title">${icons.x} Incorrecto</div>`;
+            feedbackEl.innerHTML = `${feedbackTitle}${problem.explanation}`;
+            
+            renderMath();
+            feedbackEl.style.display = 'block';
+            if (currentProblemIndex < currentQuizProblems.length - 1) { nextButton.textContent = 'Siguiente →'; } 
+            else { nextButton.textContent = 'Finalizar Sección'; }
+            nextButton.classList.add('visible');
+        }
+
+        nextButton.onclick = () => {
+            currentProblemIndex++;
+            if (currentProblemIndex < currentQuizProblems.length) {
+                renderProblem(currentProblemIndex);
+            } else {
+                endOfCategory();
+            }
+        };
+        
+        function endOfCategory() {
+            completedCategories[currentCategory.id] = {
+                score: score,
+                total: currentQuizProblems.length
+            };
+            localStorage.setItem('completedQuizCategories', JSON.stringify(completedCategories));
+            
+            quizContainerEl.classList.add('hidden');
+            finalScreenEl.classList.remove('hidden');
+
+            const percentage = currentQuizProblems.length > 0 ? Math.round((score / currentQuizProblems.length) * 100) : 100;
+            document.getElementById('final-title').textContent = `Sección Completada: ${currentCategory.title}`;
+            document.getElementById('final-message').textContent = currentQuizProblems.length > 0 ? `¡Gran trabajo! Has completado esta sección.` : `¡Concepto explorado! Ahora puedes continuar con la siguiente sección.`;
+            document.getElementById('final-score').textContent = currentQuizProblems.length > 0 ? `${score} / ${currentQuizProblems.length}` : '✔';
+            const finalPercentageEl = document.getElementById('final-percentage');
+            if (currentQuizProblems.length > 0) {
+                finalPercentageEl.textContent = `(${percentage}%)`;
+                finalPercentageEl.style.color = percentage >= 60 ? 'var(--success-color)' : 'var(--danger-color)';
+            } else {
+                finalPercentageEl.textContent = '';
+            }
+            backToMenuBtn.textContent = 'Volver al Menú';
+            backToMenuBtn.onclick = () => {
+                finalScreenEl.classList.add('hidden');
+                renderCategoryScreen();
+            };
+        }
+        
+        showFinalResultsBtn.onclick = () => {
+            categorySelectionScreen.classList.add('hidden');
+            quizWrapperEl.classList.remove('hidden');
+
+            summaryContainerEl.classList.add('hidden');
+            quizContainerEl.classList.add('hidden');
+            finalScreenEl.classList.remove('hidden');
+
+            let totalScore = 0;
+            let totalProblems = 0;
+            Object.values(completedCategories).forEach(cat => {
+                totalScore += cat.score;
+                if (cat.total > 0) {
+                    totalProblems += cat.total;
+                }
+            });
+
+            const percentage = totalProblems > 0 ? Math.round((totalScore / totalProblems) * 100) : 0;
+            document.getElementById('final-title').textContent = '¡Resumen Final del Desafío!';
+            document.getElementById('final-message').textContent = '¡Felicidades! Has completado todos los temas. Este es tu rendimiento general.';
+            document.getElementById('final-score').textContent = `${totalScore} / ${totalProblems}`;
+            const finalPercentageEl = document.getElementById('final-percentage');
+            finalPercentageEl.textContent = `(${percentage}%)`;
+            finalPercentageEl.style.color = percentage >= 60 ? 'var(--success-color)' : 'var(--danger-color)';
+            
+            backToMenuBtn.textContent = 'Reiniciar Desafío';
+            backToMenuBtn.onclick = () => {
+                localStorage.removeItem('completedQuizCategories');
+                window.location.reload();
+            };
+        };
+        
+        renderCategoryScreen();
+        renderMath();
+    });
+    </script>
+</body>
+</html>
+  
